@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SavingsController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function() {
+    Route::prefix('savings')->group(function () {
+        Route::get('/', [SavingsController::class, 'index'])->name('list');
+        Route::get('/{user_id}', [SavingsController::class, 'show'])->name('detail');
+        Route::post('/store', [SavingsController::class, 'store'])->name('store');
+    });
+
+    Route::prefix('transactions')->group(function() {
+        Route::get('/', [TransactionController::class, 'index'])->name('list');
+        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('detail');
+    });
 });
+
+
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
